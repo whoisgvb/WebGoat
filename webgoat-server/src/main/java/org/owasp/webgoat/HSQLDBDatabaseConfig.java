@@ -1,6 +1,5 @@
 package org.owasp.webgoat;
 
-import lombok.extern.slf4j.Slf4j;
 import org.hsqldb.server.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,7 +17,6 @@ import javax.sql.DataSource;
  * JVM. This can only be done if you start a standalone HSQLDB. We need both WebWolf and WebGoat to use the same database
  */
 @Configuration
-@Slf4j
 @ConditionalOnProperty(prefix = "webgoat.start", name = "hsqldb", havingValue = "true")
 public class HSQLDBDatabaseConfig {
 
@@ -29,7 +27,7 @@ public class HSQLDBDatabaseConfig {
     public Server hsqlStandalone(@Value("${webgoat.server.directory}") String directory,
                                  @Value("${hsqldb.silent:true}") boolean silent,
                                  @Value("${hsqldb.trace:false}") boolean trace) {
-        log.info("Starting internal database on port {} ...", hsqldbPort);
+
         Server server = new Server();
         server.setDatabaseName(0, "webgoat");
         server.setDatabasePath(0, directory + "/data/webgoat");

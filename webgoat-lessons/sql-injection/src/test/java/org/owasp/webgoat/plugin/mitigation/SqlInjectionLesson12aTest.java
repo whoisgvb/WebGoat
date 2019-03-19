@@ -28,7 +28,7 @@ public class SqlInjectionLesson12aTest extends LessonTest {
     private WebgoatContext context;
 
     @Before
-    public void setup()  {
+    public void setup() throws Exception {
         SqlInjection sql = new SqlInjection();
 
         when(webSession.getCurrentLesson()).thenReturn(sql);
@@ -42,40 +42,6 @@ public class SqlInjectionLesson12aTest extends LessonTest {
                 .param("column", "id"))
 
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    public void addressCorrectShouldOrderByHostname() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/SqlInjection/servers")
-                .param("column", "CASE WHEN (SELECT ip FROM servers WHERE hostname='webgoat-prd') LIKE '104.%' THEN hostname ELSE id END"))
-
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].hostname", is("webgoat-acc")));
-    }
-
-    @Test
-    public void addressCorrectShouldOrderByHostnameUsingSubstr() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/SqlInjection/servers")
-                .param("column", "case when (select ip from servers where hostname='webgoat-prd' and substr(ip,1,1) = '1') IS NOT NULL then hostname else id end"))
-
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].hostname", is("webgoat-acc")));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/SqlInjection/servers")
-                .param("column", "case when (select ip from servers where hostname='webgoat-prd' and substr(ip,2,1) = '0') IS NOT NULL then hostname else id end"))
-
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].hostname", is("webgoat-acc")));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/SqlInjection/servers")
-                .param("column", "case when (select ip from servers where hostname='webgoat-prd' and substr(ip,3,1) = '4') IS NOT NULL then hostname else id end"))
-
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].hostname", is("webgoat-acc")));
-    }
-
-    @Test
-    public void addressIncorrectShouldOrderByIdUsingSubstr() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/SqlInjection/servers")
-                .param("column", "case when (select ip from servers where hostname='webgoat-prd' and substr(ip,1,1) = '9') IS NOT NULL then hostname else id end"))
-
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].hostname", is("webgoat-dev")));
     }
 
     @Test
@@ -97,11 +63,19 @@ public class SqlInjectionLesson12aTest extends LessonTest {
     }
 
     @Test
-    public void addressIncorrectShouldOrderByHostname() throws Exception {
+    public void passwordIncorrectShouldOrderByHostname() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/SqlInjection/servers")
                 .param("column", "CASE WHEN (SELECT ip FROM servers WHERE hostname='webgoat-prd') LIKE '192.%' THEN hostname ELSE id END"))
 
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].hostname", is("webgoat-dev")));
+    }
+
+    @Test
+    public void passwordCorrectShouldOrderByHostname() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/SqlInjection/servers")
+                .param("column", "CASE WHEN (SELECT ip FROM servers WHERE hostname='webgoat-prd') LIKE '104.%' THEN hostname ELSE id END"))
+
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].hostname", is("webgoat-acc")));
     }
 
     @Test

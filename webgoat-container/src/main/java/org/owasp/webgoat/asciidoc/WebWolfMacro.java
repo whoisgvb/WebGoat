@@ -45,10 +45,6 @@ public class WebWolfMacro extends InlineMacroProcessor {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String ip = request.getRemoteAddr();
         String hostname = StringUtils.hasText(ip) ? ip : host;
-        return "http://" + hostname + ":" + port + (includeWebWolfContext() ? "/WebWolf" : "");
-    }
-
-    protected boolean includeWebWolfContext() {
-        return true;
+        return "http://" + hostname + ":" + port + "/WebWolf";
     }
 }
